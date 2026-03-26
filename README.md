@@ -91,3 +91,4 @@ It is a scheduled Python data pipeline that fetches real financial market data (
 - Migrate storage fully to a cloud data warehouse (e.g., BigQuery, Snowflake) in Project 2.
 - Integrate the structured dataset as the foundation for an advanced machine learning/AI predictive application.
 
+*Sample output screenshot placeholder here*
