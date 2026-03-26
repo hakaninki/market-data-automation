@@ -3,7 +3,7 @@
 This project is a clean, reliable data pipeline designed as the data layer for a future AI project. 
 It is a scheduled Python data pipeline that fetches real financial market data (BTC, ETH, Gold), validates and normalizes it, computes simple derived metrics, stores structured time-series data, writes to Google Sheets, CSV, and SQLite, and runs automatically daily via GitHub Actions.
 
-![Daily Market Data Pipeline](https://github.com/yourusername/market-data-automation/actions/workflows/daily_pipeline.yml/badge.svg)
+![Daily Market Data Pipeline](https://github.com/hakaninki/market-data-automation/actions/workflows/daily_pipeline.yml/badge.svg)
 
 *(Last Run Note: This is an automatically scheduled pipeline running at 08:00 UTC daily.)*
 
@@ -91,4 +91,4 @@ It is a scheduled Python data pipeline that fetches real financial market data (
 - Migrate storage fully to a cloud data warehouse (e.g., BigQuery, Snowflake) in Project 2.
 - Integrate the structured dataset as the foundation for an advanced machine learning/AI predictive application.
 
-*Sample output screenshot placeholder here*
+
