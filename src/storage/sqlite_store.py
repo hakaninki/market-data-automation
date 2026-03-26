@@ -80,9 +80,9 @@ class SQLiteStore(StorageAdapter):
                 conn.close()
 
             logger.info(
-                    f"Wrote {cursor.rowcount} new records to SQLite "
-                    f"({len(records) - cursor.rowcount} skipped)."
-                )
+                f"Wrote {cursor.rowcount} new records to SQLite "
+                f"({len(records) - cursor.rowcount} skipped)."
+            )
         except Exception as e:
             logger.error(f"Failed to write to SQLite: {e}")
             raise

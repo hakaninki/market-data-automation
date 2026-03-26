@@ -69,28 +69,37 @@ class SheetsStore(StorageAdapter):
             existing_keys = set()
             if not existing_data:
                 sheet.append_row(fieldnames)
-            else:
-                for i, row in enumerate(existing_data):
-                    if i == 0:  # Skip header
-                        continue
-                    if len(row) > 2:
-                        existing_keys.add((row[0], row[2]))
+                existing_data = [fieldnames]  # Initialize to correctly skip header
+
+            for row in existing_data:
+                # Only evaluate if row has data and is not the header row
+                if not row or str(row[0]).strip() == "run_date":
+                    continue
+                if len(row) >= 3:
+                    # Deduplication uses (run_date, symbol) as composite key
+                    run_date_val = str(row[0]).strip()
+                    symbol_val = str(row[2]).strip()
+                    existing_keys.add((run_date_val, symbol_val))
 
             rows_to_write = []
             skipped = 0
 
             for record in records:
-                key = (record.run_date, record.symbol)
-                if key in existing_keys:
+                # Same date must allow multiple symbols, only skip if BOTH match
+                rec_run_date = str(record.run_date).strip()
+                rec_symbol = str(record.symbol).strip()
+                composite_key = (rec_run_date, rec_symbol)
+
+                if composite_key in existing_keys:
                     skipped += 1
-                    logger.warning(f"Skipping duplicate record in Sheets: {key}")
+                    logger.warning(f"Skipping duplicate record in Sheets: {composite_key}")
                     continue
 
                 row_data = [
-                    record.run_date,
-                    record.fetched_at,
-                    record.symbol,
-                    record.name,
+                    rec_run_date,
+                    str(record.fetched_at),
+                    rec_symbol,
+                    str(record.name),
                     record.price_usd,
                     record.change_pct_24h if record.change_pct_24h is not None else "",
                     record.high_24h_usd if record.high_24h_usd is not None else "",
@@ -98,12 +107,13 @@ class SheetsStore(StorageAdapter):
                     record.momentum_proxy if record.momentum_proxy is not None else "",
                     record.volatility_proxy if record.volatility_proxy is not None else "",
                     record.daily_delta_usd if record.daily_delta_usd is not None else "",
-                    record.data_source,
-                    record.pipeline_version,
+                    str(record.data_source),
+                    str(record.pipeline_version),
                 ]
                 rows_to_write.append(row_data)
 
             if rows_to_write:
+                # Use append_rows to write vertically under existing data
                 sheet.append_rows(rows_to_write)
                 logger.info(f"Wrote {len(rows_to_write)} records to Sheets ({skipped} skipped).")
             else:

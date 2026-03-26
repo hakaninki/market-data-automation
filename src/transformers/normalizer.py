@@ -30,21 +30,21 @@ def compute_momentum_proxy(db_path: str, symbol: str, today_price: float) -> Opt
             cursor = conn.cursor()
             cursor.execute(
                 "SELECT price_usd FROM market_data WHERE symbol = ? ORDER BY run_date DESC LIMIT 7",
-                (symbol,)
+                (symbol,),
             )
             rows = cursor.fetchall()
         finally:
             conn.close()
-            
+
         if len(rows) < 2:
             return None
-            
+
         history = [r[0] for r in rows]
         mean_price = sum(history) / len(history)
-        
+
         if mean_price == 0:
             return None
-            
+
         return (today_price - mean_price) / mean_price * 100.0
     except sqlite3.OperationalError:
         # Table might not exist yet
@@ -70,15 +70,15 @@ def compute_daily_delta_usd(
             cursor = conn.cursor()
             cursor.execute(
                 "SELECT price_usd FROM market_data WHERE symbol = ? AND run_date = ?",
-                (symbol, yesterday_str)
+                (symbol, yesterday_str),
             )
             row = cursor.fetchone()
         finally:
             conn.close()
-            
+
         if row is None:
             return None
-            
+
         yesterday_price = row[0]
         return today_price - yesterday_price
     except sqlite3.OperationalError:
